@@ -1,0 +1,32 @@
+# Uso:  docker compose up --build            -> base de datos + API en http://localhost:8000/docs
+#       docker compose run --rm tests        -> ejecuta las pruebas con cobertura
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vetcare}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vetcare_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-vetcare}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vetcare}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-vetcare}:${POSTGRES_PASSWORD:-vetcare_dev}@db:5432/${POSTGRES_DB:-vetcare}
+      SEED_ON_START: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  tests:
+    build: .
+    profiles: ["tests"]
+    command: python -m pytest -v --cov=src --cov-report=term-missing --cov-fail-under=80
+    environment:
+      DATABASE_URL: sqlite:///:memory:
