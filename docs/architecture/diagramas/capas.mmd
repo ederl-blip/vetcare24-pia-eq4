@@ -1,0 +1,6 @@
+flowchart LR
+  A[API FastAPI<br/>rutas y esquemas] --> B[Aplicación<br/>servicios y EventBus]
+  B --> C[Dominio<br/>entidades, Specifications,<br/>estados, eventos]
+  D[Infraestructura<br/>SQLAlchemy, repositorios, seed] --> C
+  B --> D
+  D --> E[(SQLite / PostgreSQL)]

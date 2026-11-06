@@ -1,0 +1,15 @@
+sequenceDiagram
+  actor R as Recepción
+  participant API as FastAPI
+  participant S as OperacionService
+  participant O as Operacion
+  participant DB as Base de datos
+  R->>API: POST /operaciones/{id}/confirmar
+  API->>S: confirmar(id)
+  S->>DB: obtener cita
+  S->>S: Specification puede_procesarse
+  S->>O: confirmar() (máquina de estados)
+  S->>DB: reservar lugares del servicio
+  S->>DB: guardar estado + evento OperacionConfirmada
+  S-->>API: cita CONFIRMADA
+  API-->>R: 200 OK

@@ -1,0 +1,121 @@
+﻿caso_id,operacion_id,tipo_prueba,total_mxn,resultado,detalle
+VET-T001,VET-O001,validar_operacion,7587.00,APROBADO,
+VET-B001,VET-O001,evaluar_beneficio,7587.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T002,VET-O002,validar_operacion,6593.00,APROBADO,
+VET-B002,VET-O002,evaluar_beneficio,6593.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T003,VET-O003,validar_operacion,1307.00,APROBADO,
+VET-B003,VET-O003,evaluar_beneficio,1307.00,SIN_BENEFICIO,el tutor no es preferente; el total es menor a $1500.00 MXN
+VET-T004,VET-O004,validar_operacion,4405.00,APROBADO,
+VET-B004,VET-O004,evaluar_beneficio,4405.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T005,VET-O005,validar_operacion,4634.00,APROBADO,
+VET-B005,VET-O005,evaluar_beneficio,4634.00,CON_BENEFICIO,
+VET-T006,VET-O006,validar_operacion,2104.00,RECHAZADO,el tutor está inactivo
+VET-B006,VET-O006,evaluar_beneficio,2104.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T007,VET-O007,validar_operacion,2927.00,RECHAZADO,el tutor está inactivo
+VET-B007,VET-O007,evaluar_beneficio,2927.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T008,VET-O008,validar_operacion,12473.00,RECHAZADO,el tutor está inactivo; la cita no tiene autorización
+VET-B008,VET-O008,evaluar_beneficio,12473.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T009,VET-O009,validar_operacion,3495.00,RECHAZADO,el tutor está inactivo
+VET-B009,VET-O009,evaluar_beneficio,3495.00,SIN_BENEFICIO,el tutor no es preferente; se cumple la condición excluyente (la cita ya tiene una promoción activa)
+VET-T010,VET-O010,validar_operacion,5825.00,RECHAZADO,el tutor está inactivo
+VET-B010,VET-O010,evaluar_beneficio,5825.00,CON_BENEFICIO,
+VET-T011,VET-O011,validar_operacion,5286.00,APROBADO,
+VET-B011,VET-O011,evaluar_beneficio,5286.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T012,VET-O012,validar_operacion,768.00,APROBADO,
+VET-B012,VET-O012,evaluar_beneficio,768.00,SIN_BENEFICIO,el tutor no es preferente; el total es menor a $1500.00 MXN
+VET-T013,VET-O013,validar_operacion,0.00,RECHAZADO,la cita no tiene ningún servicio agregado
+VET-B013,VET-O013,evaluar_beneficio,0.00,SIN_BENEFICIO,el tutor no es preferente; el total es menor a $1500.00 MXN
+VET-T014,VET-O014,validar_operacion,7445.00,APROBADO,
+VET-B014,VET-O014,evaluar_beneficio,7445.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T015,VET-O015,validar_operacion,1023.00,APROBADO,
+VET-B015,VET-O015,evaluar_beneficio,1023.00,SIN_BENEFICIO,el total es menor a $1500.00 MXN
+VET-T016,VET-O016,validar_operacion,7245.00,RECHAZADO,la cita no tiene autorización
+VET-B016,VET-O016,evaluar_beneficio,7245.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T017,VET-O017,validar_operacion,6622.00,APROBADO,
+VET-B017,VET-O017,evaluar_beneficio,6622.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T018,VET-O018,validar_operacion,6648.00,APROBADO,
+VET-B018,VET-O018,evaluar_beneficio,6648.00,SIN_BENEFICIO,el tutor no es preferente; se cumple la condición excluyente (la cita ya tiene una promoción activa)
+VET-T019,VET-O019,validar_operacion,2075.00,APROBADO,
+VET-B019,VET-O019,evaluar_beneficio,2075.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T020,VET-O020,validar_operacion,9917.00,APROBADO,
+VET-B020,VET-O020,evaluar_beneficio,9917.00,CON_BENEFICIO,
+VET-T021,VET-O021,validar_operacion,2643.00,APROBADO,
+VET-B021,VET-O021,evaluar_beneficio,2643.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T022,VET-O022,validar_operacion,5825.00,APROBADO,
+VET-B022,VET-O022,evaluar_beneficio,5825.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T023,VET-O023,validar_operacion,6422.00,APROBADO,
+VET-B023,VET-O023,evaluar_beneficio,6422.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T024,VET-O024,validar_operacion,3040.00,RECHAZADO,la cita no tiene autorización
+VET-B024,VET-O024,evaluar_beneficio,3040.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T025,VET-O025,validar_operacion,3611.00,APROBADO,
+VET-B025,VET-O025,evaluar_beneficio,3611.00,CON_BENEFICIO,
+VET-T026,VET-O026,validar_operacion,5457.00,APROBADO,
+VET-B026,VET-O026,evaluar_beneficio,5457.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T027,VET-O027,validar_operacion,739.00,APROBADO,
+VET-B027,VET-O027,evaluar_beneficio,739.00,SIN_BENEFICIO,el tutor no es preferente; el total es menor a $1500.00 MXN; se cumple la condición excluyente (la cita ya tiene una promoción activa)
+VET-T028,VET-O028,validar_operacion,5825.00,APROBADO,
+VET-B028,VET-O028,evaluar_beneficio,5825.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T029,VET-O029,validar_operacion,10030.00,APROBADO,
+VET-B029,VET-O029,evaluar_beneficio,10030.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T030,VET-O030,validar_operacion,5512.00,APROBADO,
+VET-B030,VET-O030,evaluar_beneficio,5512.00,CON_BENEFICIO,
+VET-T031,VET-O031,validar_operacion,2643.00,APROBADO,
+VET-B031,VET-O031,evaluar_beneficio,2643.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T032,VET-O032,validar_operacion,7361.00,RECHAZADO,la cita no tiene autorización
+VET-B032,VET-O032,evaluar_beneficio,7361.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T033,VET-O033,validar_operacion,1791.00,APROBADO,
+VET-B033,VET-O033,evaluar_beneficio,1791.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T034,VET-O034,validar_operacion,4405.00,APROBADO,
+VET-B034,VET-O034,evaluar_beneficio,4405.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T035,VET-O035,validar_operacion,4718.00,APROBADO,
+VET-B035,VET-O035,evaluar_beneficio,4718.00,CON_BENEFICIO,
+VET-T036,VET-O036,validar_operacion,2472.00,APROBADO,
+VET-B036,VET-O036,evaluar_beneficio,2472.00,SIN_BENEFICIO,el tutor no es preferente; se cumple la condición excluyente (la cita ya tiene una promoción activa)
+VET-T037,VET-O037,validar_operacion,5883.00,APROBADO,
+VET-B037,VET-O037,evaluar_beneficio,5883.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T038,VET-O038,validar_operacion,9149.00,APROBADO,
+VET-B038,VET-O038,evaluar_beneficio,9149.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T039,VET-O039,validar_operacion,0.00,RECHAZADO,la cita no tiene ningún servicio agregado
+VET-B039,VET-O039,evaluar_beneficio,0.00,SIN_BENEFICIO,el tutor no es preferente; el total es menor a $1500.00 MXN
+VET-T040,VET-O040,validar_operacion,4405.00,RECHAZADO,la cita no tiene autorización
+VET-B040,VET-O040,evaluar_beneficio,4405.00,CON_BENEFICIO,
+VET-T041,VET-O041,validar_operacion,9178.00,APROBADO,
+VET-B041,VET-O041,evaluar_beneficio,9178.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T042,VET-O042,validar_operacion,4376.00,APROBADO,
+VET-B042,VET-O042,evaluar_beneficio,4376.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T043,VET-O043,validar_operacion,4631.00,APROBADO,
+VET-B043,VET-O043,evaluar_beneficio,4631.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T044,VET-O044,validar_operacion,7645.00,APROBADO,
+VET-B044,VET-O044,evaluar_beneficio,7645.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T045,VET-O045,validar_operacion,939.00,APROBADO,
+VET-B045,VET-O045,evaluar_beneficio,939.00,SIN_BENEFICIO,el total es menor a $1500.00 MXN; se cumple la condición excluyente (la cita ya tiene una promoción activa)
+VET-T046,VET-O046,validar_operacion,2985.00,RECHAZADO,el tutor está inactivo
+VET-B046,VET-O046,evaluar_beneficio,2985.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T047,VET-O047,validar_operacion,7274.00,RECHAZADO,el tutor está inactivo
+VET-B047,VET-O047,evaluar_beneficio,7274.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T048,VET-O048,validar_operacion,1904.00,RECHAZADO,el tutor está inactivo; la cita no tiene autorización
+VET-B048,VET-O048,evaluar_beneficio,1904.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T049,VET-O049,validar_operacion,9575.00,RECHAZADO,el tutor está inactivo
+VET-B049,VET-O049,evaluar_beneficio,9575.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T050,VET-O050,validar_operacion,7161.00,RECHAZADO,el tutor está inactivo
+VET-B050,VET-O050,evaluar_beneficio,7161.00,CON_BENEFICIO,
+VET-T051,VET-O051,validar_operacion,1591.00,APROBADO,
+VET-B051,VET-O051,evaluar_beneficio,1591.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T052,VET-O052,validar_operacion,2985.00,APROBADO,
+VET-B052,VET-O052,evaluar_beneficio,2985.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T053,VET-O053,validar_operacion,6906.00,APROBADO,
+VET-B053,VET-O053,evaluar_beneficio,6906.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T054,VET-O054,validar_operacion,3240.00,APROBADO,
+VET-B054,VET-O054,evaluar_beneficio,3240.00,SIN_BENEFICIO,el tutor no es preferente; se cumple la condición excluyente (la cita ya tiene una promoción activa)
+VET-T055,VET-O055,validar_operacion,3779.00,APROBADO,
+VET-B055,VET-O055,evaluar_beneficio,3779.00,CON_BENEFICIO,
+VET-T056,VET-O056,validar_operacion,9349.00,RECHAZADO,la cita no tiene autorización
+VET-B056,VET-O056,evaluar_beneficio,9349.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T057,VET-O057,validar_operacion,4347.00,APROBADO,
+VET-B057,VET-O057,evaluar_beneficio,4347.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T058,VET-O058,validar_operacion,7245.00,APROBADO,
+VET-B058,VET-O058,evaluar_beneficio,7245.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T059,VET-O059,validar_operacion,5570.00,APROBADO,
+VET-B059,VET-O059,evaluar_beneficio,5570.00,SIN_BENEFICIO,el tutor no es preferente
+VET-T060,VET-O060,validar_operacion,1336.00,APROBADO,
+VET-B060,VET-O060,evaluar_beneficio,1336.00,SIN_BENEFICIO,el total es menor a $1500.00 MXN

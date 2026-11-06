@@ -1,0 +1,8 @@
+stateDiagram-v2
+  [*] --> SOLICITADA
+  SOLICITADA --> CONFIRMADA : confirmar
+  CONFIRMADA --> REALIZADA : realizar
+  SOLICITADA --> CANCELADA : cancelar
+  CONFIRMADA --> CANCELADA : cancelar
+  REALIZADA --> [*]
+  CANCELADA --> [*]

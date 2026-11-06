@@ -1,0 +1,21 @@
+﻿caso_id,operacion_id,accion,estado_inicial,estado_final,resultado,evento,detalle
+VET-S001,VET-O001,completar,SOLICITADA,SOLICITADA,RECHAZADA (TransicionInvalida),,No se puede marcar como realizada una cita que está en estado SOLICITADA
+VET-S002,VET-O002,cancelar,SOLICITADA,CANCELADA,OK,OperacionCancelada,
+VET-S003,VET-O003,repetir_aprobacion,SOLICITADA,CONFIRMADA,RECHAZADA (TransicionInvalida),OperacionConfirmada,No se puede confirmar una cita que está en estado CONFIRMADA
+VET-S004,VET-O004,saltar_estado,SOLICITADA,SOLICITADA,RECHAZADA (TransicionInvalida),,No se puede marcar como realizada una cita que está en estado SOLICITADA
+VET-S005,VET-O005,aprobar,SOLICITADA,CONFIRMADA,OK,OperacionConfirmada,
+VET-S006,VET-O006,completar,SOLICITADA,SOLICITADA,RECHAZADA (TransicionInvalida),,No se puede marcar como realizada una cita que está en estado SOLICITADA
+VET-S007,VET-O007,cancelar,SOLICITADA,CANCELADA,OK,OperacionCancelada,
+VET-S008,VET-O008,repetir_aprobacion,SOLICITADA,SOLICITADA,RECHAZADA (OperacionNoProcesable),,No se puede confirmar la cita: el tutor está inactivo; la cita no tiene autorización
+VET-S009,VET-O009,saltar_estado,SOLICITADA,SOLICITADA,RECHAZADA (TransicionInvalida),,No se puede marcar como realizada una cita que está en estado SOLICITADA
+VET-S010,VET-O010,aprobar,SOLICITADA,SOLICITADA,RECHAZADA (OperacionNoProcesable),,No se puede confirmar la cita: el tutor está inactivo
+VET-S011,VET-O011,completar,SOLICITADA,SOLICITADA,RECHAZADA (TransicionInvalida),,No se puede marcar como realizada una cita que está en estado SOLICITADA
+VET-S012,VET-O012,cancelar,SOLICITADA,CANCELADA,OK,OperacionCancelada,
+VET-S013,VET-O013,repetir_aprobacion,SOLICITADA,SOLICITADA,RECHAZADA (OperacionNoProcesable),,No se puede confirmar la cita: la cita no tiene ningún servicio agregado
+VET-S014,VET-O014,saltar_estado,SOLICITADA,SOLICITADA,RECHAZADA (TransicionInvalida),,No se puede marcar como realizada una cita que está en estado SOLICITADA
+VET-S015,VET-O015,aprobar,SOLICITADA,CONFIRMADA,OK,OperacionConfirmada,
+VET-S016,VET-O016,completar,SOLICITADA,SOLICITADA,RECHAZADA (TransicionInvalida),,No se puede marcar como realizada una cita que está en estado SOLICITADA
+VET-S017,VET-O017,cancelar,SOLICITADA,CANCELADA,OK,OperacionCancelada,
+VET-S018,VET-O018,repetir_aprobacion,SOLICITADA,CONFIRMADA,RECHAZADA (TransicionInvalida),OperacionConfirmada,No se puede confirmar una cita que está en estado CONFIRMADA
+VET-S019,VET-O019,saltar_estado,SOLICITADA,SOLICITADA,RECHAZADA (TransicionInvalida),,No se puede marcar como realizada una cita que está en estado SOLICITADA
+VET-S020,VET-O020,aprobar,SOLICITADA,CONFIRMADA,OK,OperacionConfirmada,

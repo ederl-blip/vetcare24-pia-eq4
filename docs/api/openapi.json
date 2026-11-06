@@ -1,0 +1,1137 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "VetCare 24 API",
+    "description": "Citas y servicios veterinarios de VetCare 24 (PIA, Equipo 4, UANL FIME).",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "¿La API está funcionando?",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalogo": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Servicios y lugares disponibles",
+        "operationId": "catalogo_catalogo_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operaciones": {
+      "post": {
+        "tags": [
+          "Citas"
+        ],
+        "summary": "Solicitar una cita",
+        "operationId": "crear_operacion_operaciones_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperacionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperacionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Citas"
+        ],
+        "summary": "Listar citas",
+        "operationId": "listar_operaciones_get",
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(SOLICITADA|CONFIRMADA|REALIZADA|CANCELADA)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Estado"
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limite"
+            }
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desde"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperacionOut"
+                  },
+                  "title": "Response Listar Operaciones Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operaciones/{op_id}": {
+      "get": {
+        "tags": [
+          "Citas"
+        ],
+        "summary": "Consultar una cita",
+        "operationId": "obtener_operaciones__op_id__get",
+        "parameters": [
+          {
+            "name": "op_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Op Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperacionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operaciones/{op_id}/confirmar": {
+      "post": {
+        "tags": [
+          "Citas"
+        ],
+        "summary": "Confirmar una cita (reserva los lugares)",
+        "operationId": "confirmar_operaciones__op_id__confirmar_post",
+        "parameters": [
+          {
+            "name": "op_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Op Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperacionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operaciones/{op_id}/realizar": {
+      "post": {
+        "tags": [
+          "Citas"
+        ],
+        "summary": "Marcar una cita como realizada",
+        "operationId": "realizar_operaciones__op_id__realizar_post",
+        "parameters": [
+          {
+            "name": "op_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Op Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperacionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operaciones/{op_id}/cancelar": {
+      "post": {
+        "tags": [
+          "Citas"
+        ],
+        "summary": "Cancelar una cita",
+        "operationId": "cancelar_operaciones__op_id__cancelar_post",
+        "parameters": [
+          {
+            "name": "op_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Op Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperacionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operaciones/{op_id}/evaluacion": {
+      "get": {
+        "tags": [
+          "Citas"
+        ],
+        "summary": "¿Puede procesarse? ¿Aplica beneficio?",
+        "operationId": "evaluacion_operaciones__op_id__evaluacion_get",
+        "parameters": [
+          {
+            "name": "op_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Op Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operaciones/{op_id}/eventos": {
+      "get": {
+        "tags": [
+          "Citas"
+        ],
+        "summary": "Historial de eventos de la cita",
+        "operationId": "eventos_operaciones__op_id__eventos_get",
+        "parameters": [
+          {
+            "name": "op_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Op Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventoOut"
+                  },
+                  "title": "Response Eventos Operaciones  Op Id  Eventos Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tutores": {
+      "post": {
+        "tags": [
+          "Expedientes"
+        ],
+        "summary": "Registrar tutor (evita expedientes duplicados)",
+        "operationId": "registrar_tutor_tutores_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TutorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TutorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mascotas": {
+      "post": {
+        "tags": [
+          "Clínica"
+        ],
+        "summary": "Registrar mascota con sus alergias",
+        "operationId": "registrar_mascota_mascotas_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MascotaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MascotaOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mascotas/{mascota_id}/recetas": {
+      "post": {
+        "tags": [
+          "Clínica"
+        ],
+        "summary": "Recetar un medicamento (bloquea alergias)",
+        "operationId": "recetar_mascotas__mascota_id__recetas_post",
+        "parameters": [
+          {
+            "name": "mascota_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Mascota Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecetaIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecetaOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agenda/urgencias": {
+      "post": {
+        "tags": [
+          "Clínica"
+        ],
+        "summary": "Registrar urgencia: pausa la cita en curso y recorre la agenda",
+        "operationId": "urgencia_agenda_urgencias_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UrgenciaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CitaIn": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "mascota_id": {
+            "type": "integer",
+            "title": "Mascota Id"
+          },
+          "inicio": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Inicio"
+          },
+          "fin": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "mascota_id",
+          "inicio",
+          "fin"
+        ],
+        "title": "CitaIn"
+      },
+      "EventoOut": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "ocurrido": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ocurrido"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "ocurrido"
+        ],
+        "title": "EventoOut"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LineaIn": {
+        "properties": {
+          "recurso_id": {
+            "type": "string",
+            "title": "Recurso Id",
+            "examples": [
+              "VET-P001"
+            ]
+          },
+          "cantidad": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad",
+            "description": "Debe ser mayor a cero",
+            "examples": [
+              2
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "recurso_id",
+          "cantidad"
+        ],
+        "title": "LineaIn"
+      },
+      "LineaOut": {
+        "properties": {
+          "recurso_id": {
+            "type": "string",
+            "title": "Recurso Id"
+          },
+          "cantidad": {
+            "type": "integer",
+            "title": "Cantidad"
+          },
+          "precio_unitario_mxn": {
+            "type": "string",
+            "title": "Precio Unitario Mxn"
+          },
+          "subtotal_mxn": {
+            "type": "string",
+            "title": "Subtotal Mxn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recurso_id",
+          "cantidad",
+          "precio_unitario_mxn",
+          "subtotal_mxn"
+        ],
+        "title": "LineaOut"
+      },
+      "MascotaIn": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Nombre",
+            "examples": [
+              "Luna"
+            ]
+          },
+          "propietario_id": {
+            "type": "string",
+            "title": "Propietario Id",
+            "examples": [
+              "VET-C001"
+            ]
+          },
+          "alergias": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Alergias",
+            "examples": [
+              [
+                "penicilina"
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "propietario_id"
+        ],
+        "title": "MascotaIn"
+      },
+      "MascotaOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "propietario_id": {
+            "type": "string",
+            "title": "Propietario Id"
+          },
+          "alergias": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Alergias"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "propietario_id",
+          "alergias"
+        ],
+        "title": "MascotaOut"
+      },
+      "OperacionIn": {
+        "properties": {
+          "actor_id": {
+            "type": "string",
+            "title": "Actor Id",
+            "examples": [
+              "VET-C001"
+            ]
+          },
+          "lineas": {
+            "items": {
+              "$ref": "#/components/schemas/LineaIn"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Lineas"
+          },
+          "promocion_activa": {
+            "type": "boolean",
+            "title": "Promocion Activa",
+            "default": false
+          },
+          "autorizado": {
+            "type": "boolean",
+            "title": "Autorizado",
+            "default": true
+          },
+          "referencia": {
+            "type": "string",
+            "title": "Referencia",
+            "default": ""
+          },
+          "fecha_solicitud": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Solicitud"
+          }
+        },
+        "type": "object",
+        "required": [
+          "actor_id",
+          "lineas"
+        ],
+        "title": "OperacionIn"
+      },
+      "OperacionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "actor_id": {
+            "type": "string",
+            "title": "Actor Id"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "fecha_solicitud": {
+            "type": "string",
+            "format": "date",
+            "title": "Fecha Solicitud"
+          },
+          "total_mxn": {
+            "type": "string",
+            "title": "Total Mxn"
+          },
+          "lineas": {
+            "items": {
+              "$ref": "#/components/schemas/LineaOut"
+            },
+            "type": "array",
+            "title": "Lineas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "actor_id",
+          "estado",
+          "fecha_solicitud",
+          "total_mxn",
+          "lineas"
+        ],
+        "title": "OperacionOut"
+      },
+      "RecetaIn": {
+        "properties": {
+          "medicamento": {
+            "type": "string",
+            "title": "Medicamento",
+            "examples": [
+              "Penicilina G"
+            ]
+          },
+          "sustancias": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sustancias",
+            "examples": [
+              [
+                "penicilina"
+              ]
+            ]
+          },
+          "confirmar_conscientemente": {
+            "type": "boolean",
+            "title": "Confirmar Conscientemente",
+            "default": false
+          },
+          "veterinario": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Veterinario"
+          }
+        },
+        "type": "object",
+        "required": [
+          "medicamento",
+          "sustancias"
+        ],
+        "title": "RecetaIn"
+      },
+      "RecetaOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "mascota_id": {
+            "type": "integer",
+            "title": "Mascota Id"
+          },
+          "medicamento": {
+            "type": "string",
+            "title": "Medicamento"
+          },
+          "con_alerta": {
+            "type": "boolean",
+            "title": "Con Alerta"
+          },
+          "autorizada_por": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autorizada Por"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "mascota_id",
+          "medicamento",
+          "con_alerta",
+          "autorizada_por"
+        ],
+        "title": "RecetaOut"
+      },
+      "TutorIn": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Nombre",
+            "examples": [
+              "Ana Torres"
+            ]
+          },
+          "telefono": {
+            "type": "string",
+            "title": "Telefono",
+            "default": "",
+            "examples": [
+              "81 1234 5678"
+            ]
+          },
+          "correo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correo",
+            "examples": [
+              "ana@correo.com"
+            ]
+          },
+          "ciudad": {
+            "type": "string",
+            "title": "Ciudad",
+            "default": ""
+          },
+          "confirmar_distinta_persona": {
+            "type": "boolean",
+            "title": "Confirmar Distinta Persona",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre"
+        ],
+        "title": "TutorIn"
+      },
+      "TutorOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "telefono": {
+            "type": "string",
+            "title": "Telefono"
+          },
+          "correo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correo"
+          },
+          "ciudad": {
+            "type": "string",
+            "title": "Ciudad"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "telefono",
+          "correo",
+          "ciudad"
+        ],
+        "title": "TutorOut"
+      },
+      "UrgenciaIn": {
+        "properties": {
+          "mascota_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mascota Id"
+          },
+          "motivo": {
+            "type": "string",
+            "title": "Motivo",
+            "default": ""
+          },
+          "ahora": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ahora"
+          },
+          "hora_cierre": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Hora Cierre"
+          },
+          "desplazamiento_minutos": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 15.0,
+            "title": "Desplazamiento Minutos",
+            "default": 20
+          },
+          "citas": {
+            "items": {
+              "$ref": "#/components/schemas/CitaIn"
+            },
+            "type": "array",
+            "title": "Citas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ahora",
+          "hora_cierre"
+        ],
+        "title": "UrgenciaIn"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

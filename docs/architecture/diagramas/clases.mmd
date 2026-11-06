@@ -1,0 +1,21 @@
+classDiagram
+  class Operacion {
+    +id
+    +estado: Estado
+    +total() Dinero
+    +confirmar()
+    +realizar()
+    +cancelar()
+  }
+  class Linea { +recurso_id +cantidad +precio_unitario +subtotal() }
+  class Actor { +id +nombre +es_preferente +activo }
+  class Recurso { +id +precio +capacidad +reservar(n) +liberar(n) }
+  class Dinero { +monto: Decimal }
+  class Specification { +es_satisfecha_por() +explicar() }
+  class EventoDominio { +operacion_id +ocurrido }
+  Operacion "1" *-- "1..*" Linea
+  Operacion "*" --> "1" Actor
+  Linea --> Dinero
+  Linea ..> Recurso : referencia
+  Specification ..> Operacion : evalúa
+  Operacion ..> EventoDominio : emite
