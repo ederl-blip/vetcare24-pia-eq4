@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VetCare 24</title>
+<style>
+:root{--bg:#f4f7f6;--card:#fff;--tx:#17302b;--mu:#64807a;--pr:#0f766e;--bd:#dbe5e2;--er:#b42318;--ok:#067647;--wa:#b54708}
+*{box-sizing:border-box}
+body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:var(--tx);display:flex;min-height:100vh}
+aside{width:210px;background:var(--card);border-right:1px solid var(--bd);padding:16px;display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+aside h1{font-size:18px;margin:0 0 12px;color:var(--pr)}
+nav{display:flex;flex-direction:column;gap:4px}
+nav button{text-align:left;background:none;border:0;color:var(--tx);padding:9px 10px;border-radius:8px;cursor:pointer;font:inherit}
+nav button.on{background:var(--pr);color:#fff}
+aside small{margin-top:auto;color:var(--mu);word-break:break-all}
+main{flex:1;padding:24px;max-width:960px;min-width:0}
+h2{margin:0 0 4px}.sub{color:var(--mu);margin:0 0 16px}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
+.card h3{margin:0 0 10px;font-size:16px}
+label{display:block;font-size:13px;color:var(--mu);margin:10px 0 4px}
+input,select{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;font:inherit;background:#fff;color:var(--tx)}
+input[type=checkbox]{width:auto;margin-right:6px}
+.chk{display:flex;align-items:center;margin-top:10px;color:var(--tx);font-size:14px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 12px}
+.row{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.row input{flex:1;min-width:110px}
+button.b,#dlg button{background:var(--pr);color:#fff;border:0;padding:9px 14px;border-radius:8px;cursor:pointer;font:inherit}
+button.ghost,#dlg button.ghost{background:#fff;color:var(--tx);border:1px solid var(--bd)}
+button.sm{padding:4px 8px;font-size:12px;margin:2px}
+button:disabled{opacity:.5}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-align:top}
+th{color:var(--mu);font-weight:500;font-size:12px}
+.tag{padding:2px 8px;border-radius:99px;font-size:12px;background:#e7efed}
+.SOLICITADA{background:#fef0c7;color:var(--wa)}.CONFIRMADA{background:#d1fadf;color:var(--ok)}.REALIZADA{background:#d1e9ff;color:#175cd3}.CANCELADA{background:#fee4e2;color:var(--er)}
+pre{background:#0f1f1c;color:#d6efe9;padding:12px;border-radius:8px;overflow:auto;font-size:12px;max-height:320px;margin:8px 0 0}
+.res{margin-top:12px;padding:10px 12px;border-radius:8px;background:#ecfdf3;border:1px solid #abefc6;color:var(--ok)}.res:empty{display:none}
+.tw{overflow-x:auto}
+#toast{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:9}
+#toast div{padding:10px 14px;border-radius:8px;color:#fff;max-width:340px;font-size:14px;background:var(--ok)}#toast .e{background:var(--er)}
+dialog{border:0;border-radius:12px;padding:20px;max-width:440px;width:92%}
+dialog::backdrop{background:#0006}dialog h3{margin-top:0}
+.st{display:inline-block;width:9px;height:9px;border-radius:50%;background:#aaa;margin-right:6px}.st.ok{background:#12b76a}.st.no{background:var(--er)}
+@media(max-width:700px){body{flex-direction:column}aside{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}nav{flex-direction:row;flex-wrap:wrap}aside small{display:none}main{padding:14px}}
+</style>
+</head>
+<body>
+<aside>
+  <h1>🐾 VetCare 24</h1>
+  <nav>
+    <button data-v="inicio" class="on">Inicio</button>
+    <button data-v="citas">Citas</button>
+    <button data-v="nueva">Nueva cita</button>
+    <button data-v="tutores">Tutores</button>
+    <button data-v="mascotas">Mascotas y recetas</button>
+    <button data-v="urgencias">Urgencias</button>
+  </nav>
+  <small id="apiurl"></small>
+</aside>
+
+<main>
+<section id="inicio" class="on">
+  <h2>Inicio</h2><p class="sub">Estado del sistema y catálogo de servicios.</p>
+  <div class="card"><h3>Estado de la API</h3>
+    <p><span class="st" id="dot"></span><span id="hs">Conectando… (si estaba dormida puede tardar ~50 s)</span></p>
+    <button class="b" id="reh">Revisar de nuevo</button>
+  </div>
+  <div class="card"><h3>Catálogo (servicios y lugares)</h3><div id="cat">Cargando…</div></div>
+</section>
+
+<section id="citas">
+  <h2>Citas</h2><p class="sub">Consulta y administra las citas registradas.</p>
+  <div class="card">
+    <div class="g">
+      <div><label>Estado</label><select id="fest"><option value="">Todos</option><option>SOLICITADA</option><option>CONFIRMADA</option><option>REALIZADA</option><option>CANCELADA</option></select></div>
+      <div><label>Límite</label><input id="flim" type="number" min="1" max="200" value="50"></div>
+    </div>
+    <div class="row"><button class="b" id="fbtn">Buscar</button></div>
+  </div>
+  <div class="card tw"><table>
+    <thead><tr><th>ID</th><th>Cliente</th><th>Estado</th><th>Fecha</th><th>Total</th><th>Acciones</th></tr></thead>
+    <tbody id="tb"><tr><td colspan="6">Cargando…</td></tr></tbody>
+  </table></div>
+</section>
+
+<section id="nueva">
+  <h2>Nueva cita</h2><p class="sub">Solicita una cita con uno o más servicios del catálogo.</p>
+  <form class="card" id="fcita">
+    <div class="g">
+      <div><label>ID del cliente (actor)</label><input id="c_actor" required placeholder="VET-C001"></div>
+      <div><label>Referencia</label><input id="c_ref" placeholder="Opcional"></div>
+      <div><label>Fecha de solicitud</label><input id="c_fecha" type="date"></div>
+    </div>
+    <label>Servicios</label><div id="lineas"></div>
+    <div class="row"><button type="button" class="b ghost" id="addl">+ Agregar servicio</button></div>
+    <div class="chk"><input type="checkbox" id="c_promo">Promoción activa</div>
+    <div class="chk"><input type="checkbox" id="c_aut" checked>Autorizado</div>
+    <div class="row"><button class="b">Solicitar cita</button></div>
+    <div class="res" id="o_cita"></div>
+  </form>
+</section>
+
+<section id="tutores">
+  <h2>Tutores</h2><p class="sub">Registra al dueño de la mascota. Si el teléfono o correo ya existe, te lo avisa.</p>
+  <form class="card" id="ftutor">
+    <div class="g">
+      <div><label>Nombre *</label><input id="t_nom" required></div>
+      <div><label>Teléfono</label><input id="t_tel" placeholder="81 1234 5678"></div>
+      <div><label>Correo</label><input id="t_cor" type="email"></div>
+      <div><label>Ciudad</label><input id="t_ciu"></div>
+    </div>
+    <div class="row"><button class="b">Registrar tutor</button></div>
+    <div class="res" id="o_tutor"></div>
+  </form>
+</section>
+
+<section id="mascotas">
+  <h2>Mascotas y recetas</h2><p class="sub">Registra mascotas con sus alergias y receta medicamentos. Si hay alergia, se bloquea hasta que un veterinario confirme.</p>
+  <form class="card" id="fmasc">
+    <h3>Registrar mascota</h3>
+    <div class="g">
+      <div><label>Nombre *</label><input id="m_nom" required></div>
+      <div><label>ID del tutor *</label><input id="m_prop" required placeholder="VET-C001"></div>
+      <div><label>Alergias (separadas por coma)</label><input id="m_ale" placeholder="penicilina, ibuprofeno"></div>
+    </div>
+    <div class="row"><button class="b">Registrar mascota</button></div>
+    <div class="res" id="o_masc"></div>
+  </form>
+  <form class="card" id="frec">
+    <h3>Recetar medicamento</h3>
+    <div class="g">
+      <div><label>ID de la mascota *</label><input id="r_mid" type="number" required></div>
+      <div><label>Medicamento *</label><input id="r_med" required placeholder="Penicilina G"></div>
+      <div><label>Sustancias activas (coma) *</label><input id="r_sus" required placeholder="penicilina"></div>
+    </div>
+    <div class="row"><button class="b">Guardar receta</button></div>
+    <div class="res" id="o_rec"></div>
+  </form>
+</section>
+
+<section id="urgencias">
+  <h2>Urgencias</h2><p class="sub">Registra una urgencia: pausa la cita en curso y recorre las pendientes.</p>
+  <form class="card" id="furg">
+    <div class="g">
+      <div><label>ID de la mascota *</label><input id="u_mid" type="number"></div>
+      <div><label>Motivo de consulta *</label><input id="u_mot"></div>
+      <div><label>Ahora</label><input id="u_ahora" type="datetime-local" required></div>
+      <div><label>Hora de cierre</label><input id="u_cierre" type="datetime-local" required></div>
+      <div><label>Desplazamiento (15–20 min)</label><input id="u_des" type="number" min="15" max="20" value="20"></div>
+    </div>
+    <label>Citas de la agenda</label><div id="ucitas"></div>
+    <div class="row"><button type="button" class="b ghost" id="addu">+ Agregar cita</button></div>
+    <div class="row"><button class="b">Registrar urgencia</button></div>
+    <div class="res" id="o_urg"></div><pre id="j_urg" hidden></pre>
+  </form>
+</section>
+</main>
+
+<dialog id="dlg"><div id="dlgc"></div></dialog>
+<div id="toast"></div>
+
+<script>
+let API = 'https://vetcare24-api-19e7.onrender.com';
+try { API = (localStorage.getItem('vc_api') || API); } catch (e) {}
+API = API.replace(/\/$/, '');
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const list = s => s.split(',').map(x => x.trim()).filter(Boolean);
+$('#apiurl').textContent = API;
+
+function msg(d) {
+  if (!d) return '';
+  const x = d.detail ?? d;
+  if (typeof x === 'string') return x;
+  if (Array.isArray(x)) return x.map(i => (i.loc || []).slice(1).join('.') + ': ' + i.msg).join(' · ');
+  return x.mensaje || x.message || JSON.stringify(x);
+}
+async function api(path, method = 'GET', body) {
+  const r = await fetch(API + path, {
+    method, headers: { 'Content-Type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body)
+  });
+  let d = null; try { d = await r.json(); } catch (e) {}
+  if (!r.ok) { const e = new Error(msg(d) || r.statusText); e.status = r.status; throw e; }
+  return d;
+}
+function toast(t, ok = true) {
+  const d = document.createElement('div'); d.textContent = t; if (!ok) d.className = 'e';
+  $('#toast').appendChild(d); setTimeout(() => d.remove(), 5000);
+}
+function confirmar(titulo, texto, pedirNombre) {
+  return new Promise(res => {
+    const d = $('#dlg');
+    $('#dlgc').innerHTML = `<h3>${esc(titulo)}</h3><p>${esc(texto)}</p>` +
+      (pedirNombre ? '<label>Nombre del veterinario que autoriza</label><input id="vetn">' : '') +
+      '<div class="row"><button class="ghost" id="no">Cancelar</button><button id="si">Continuar</button></div>';
+    d.showModal();
+    $('#no').onclick = () => { d.close(); res(null); };
+    d.oncancel = () => res(null);
+    $('#si').onclick = () => {
+      const v = pedirNombre ? $('#vetn').value.trim() : true;
+      if (!v) { $('#vetn').focus(); return; }
+      d.close(); res(v);
+    };
+  });
+}
+function verJSON(titulo, data) {
+  $('#dlgc').innerHTML = `<h3>${esc(titulo)}</h3><pre>${esc(JSON.stringify(data, null, 2))}</pre><div class="row"><button id="x">Cerrar</button></div>`;
+  $('#dlg').showModal(); $('#x').onclick = () => $('#dlg').close();
+}
+async function enviar(btn, fn) {
+  const b = btn.querySelector('button.b:not(.ghost)'); if (b) b.disabled = true;
+  try { await fn(); } finally { if (b) b.disabled = false; }
+}
+
+/* Navegación */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button,section').forEach(e => e.classList.remove('on'));
+  b.classList.add('on'); $('#' + b.dataset.v).classList.add('on');
+  if (b.dataset.v === 'citas') cargarCitas();
+});
+
+/* Inicio */
+async function salud() {
+  $('#dot').className = 'st'; $('#hs').textContent = 'Conectando… (si estaba dormida puede tardar ~50 s)';
+  try { await api('/health'); $('#dot').className = 'st ok'; $('#hs').textContent = 'API funcionando'; }
+  catch (e) { $('#dot').className = 'st no'; $('#hs').textContent = 'No se pudo conectar: ' + e.message + ' (¿CORS o API dormida?)'; }
+}
+async function catalogo() {
+  try { const c = await api('/catalogo'); $('#cat').innerHTML = `<pre>${esc(JSON.stringify(c, null, 2))}</pre>`; }
+  catch (e) { $('#cat').textContent = 'No se pudo cargar: ' + e.message; }
+}
+$('#reh').onclick = salud;
+
+/* Citas */
+async function cargarCitas() {
+  const q = new URLSearchParams({ limite: $('#flim').value || 50 });
+  if ($('#fest').value) q.set('estado', $('#fest').value);
+  try {
+    const l = await api('/operaciones?' + q);
+    $('#tb').innerHTML = l.length ? l.map(o => {
+      const a = (k, t) => `<button class="ghost sm" data-a="${k}" data-id="${esc(o.id)}">${t}</button>`;
+      const acc = (o.estado === 'SOLICITADA' ? a('confirmar', 'Confirmar') : '') +
+        (o.estado === 'CONFIRMADA' ? a('realizar', 'Realizada') : '') +
+        (['SOLICITADA', 'CONFIRMADA'].includes(o.estado) ? a('cancelar', 'Cancelar') : '') +
+        a('evaluacion', 'Evaluación') + a('eventos', 'Historial');
+      return `<tr><td>${esc(o.id)}</td><td>${esc(o.actor_id)}</td><td><span class="tag ${esc(o.estado)}">${esc(o.estado)}</span></td><td>${esc(o.fecha_solicitud)}</td><td>$${esc(o.total_mxn)}</td><td>${acc}</td></tr>`;
+    }).join('') : '<tr><td colspan="6">No hay citas con ese filtro.</td></tr>';
+  } catch (e) { $('#tb').innerHTML = `<tr><td colspan="6">${esc(e.message)}</td></tr>`; }
+}
+$('#fbtn').onclick = cargarCitas;
+$('#tb').onclick = async e => {
+  const b = e.target.closest('button[data-a]'); if (!b) return;
+  const { a, id } = b.dataset, p = '/operaciones/' + encodeURIComponent(id);
+  try {
+    if (a === 'evaluacion' || a === 'eventos') verJSON((a === 'eventos' ? 'Historial de ' : 'Evaluación de ') + id, await api(`${p}/${a}`));
+    else { await api(`${p}/${a}`, 'POST'); toast('Cita ' + id + ': ' + a + ' correcto'); cargarCitas(); }
+  } catch (err) { toast(err.message, false); }
+};
+
+/* Nueva cita */
+function addLinea() {
+  const d = document.createElement('div'); d.className = 'row';
+  d.innerHTML = '<input class="rid" placeholder="ID del servicio (ej. VET-P001)" required><input class="cant" type="number" min="1" value="1" style="max-width:90px" required><button type="button" class="ghost sm">✕</button>';
+  d.querySelector('button').onclick = () => d.remove();
+  $('#lineas').appendChild(d);
+}
+$('#addl').onclick = addLinea; addLinea();
+$('#fcita').onsubmit = ev => {
+  ev.preventDefault();
+  enviar(ev.target, async () => {
+    const lineas = [...document.querySelectorAll('#lineas .row')].map(r => ({ recurso_id: r.querySelector('.rid').value.trim(), cantidad: +r.querySelector('.cant').value }));
+    if (!lineas.length) return toast('Agrega al menos un servicio', false);
+    try {
+      const o = await api('/operaciones', 'POST', {
+        actor_id: $('#c_actor').value.trim(), lineas, promocion_activa: $('#c_promo').checked,
+        autorizado: $('#c_aut').checked, referencia: $('#c_ref').value, fecha_solicitud: $('#c_fecha').value || null
+      });
+      $('#o_cita').textContent = `Cita ${o.id} creada (${o.estado}). Total: $${o.total_mxn} MXN`; toast('Cita solicitada');
+    } catch (e) { $('#o_cita').textContent = ''; toast(e.message, false); }
+  });
+};
+
+/* Tutores */
+async function enviarTutor(conf) {
+  try {
+    const t = await api('/tutores', 'POST', {
+      nombre: $('#t_nom').value.trim(), telefono: $('#t_tel').value.trim(),
+      correo: $('#t_cor').value.trim() || null, ciudad: $('#t_ciu').value.trim(), confirmar_distinta_persona: conf
+    });
+    $('#o_tutor').textContent = `Tutor registrado. ID: ${t.id} (úsalo al registrar mascotas).`; toast('Tutor registrado');
+  } catch (e) {
+    $('#o_tutor').textContent = '';
+    if (!conf && e.status !== 422 && /duplic|existe|mismo|tel[eé]fono|correo/i.test(e.message)) {
+      if (await confirmar('Posible expediente duplicado', e.message + ' ¿Son personas distintas (por ejemplo, familiares)?')) return enviarTutor(true);
+    } else toast(e.message, false);
+  }
+}
+$('#ftutor').onsubmit = ev => { ev.preventDefault(); enviar(ev.target, () => enviarTutor(false)); };
+
+/* Mascotas y recetas */
+$('#fmasc').onsubmit = ev => {
+  ev.preventDefault();
+  enviar(ev.target, async () => {
+    try {
+      const m = await api('/mascotas', 'POST', { nombre: $('#m_nom').value.trim(), propietario_id: $('#m_prop').value.trim(), alergias: list($('#m_ale').value) });
+      $('#o_masc').textContent = `Mascota registrada. ID: ${m.id}` + (m.alergias.length ? ` · Alergias: ${m.alergias.join(', ')}` : '');
+      $('#r_mid').value = m.id; toast('Mascota registrada');
+    } catch (e) { $('#o_masc').textContent = ''; toast(e.message, false); }
+  });
+};
+async function enviarReceta(conf, vet) {
+  try {
+    const r = await api(`/mascotas/${$('#r_mid').value}/recetas`, 'POST', {
+      medicamento: $('#r_med').value.trim(), sustancias: list($('#r_sus').value),
+      confirmar_conscientemente: conf, veterinario: vet || null
+    });
+    $('#o_rec').textContent = `Receta ${r.id} guardada` + (r.con_alerta ? ` con alerta de alergia, autorizada por ${r.autorizada_por}.` : ' sin alertas.');
+    toast('Receta guardada');
+  } catch (e) {
+    $('#o_rec').textContent = '';
+    if (!conf && e.status !== 422 && /alerg/i.test(e.message)) {
+      const v = await confirmar('⚠ Alerta de alergia', e.message + ' Si deseas continuar, indica quién autoriza.', true);
+      if (v) return enviarReceta(true, v);
+    } else toast(e.message, false);
+  }
+}
+$('#frec').onsubmit = ev => { ev.preventDefault(); enviar(ev.target, () => enviarReceta(false)); };
+
+/* Urgencias */
+const loc = d => d.toISOString().slice(0, 16);
+function addCita() {
+  const d = document.createElement('div'); d.className = 'row';
+  d.innerHTML = '<input class="ci" type="number" placeholder="ID cita" style="max-width:90px" required><input class="cm" type="number" placeholder="ID mascota" style="max-width:110px" required><input class="cs" type="datetime-local" required><input class="cf" type="datetime-local" required><button type="button" class="ghost sm">✕</button>';
+  d.querySelector('button').onclick = () => d.remove();
+  $('#ucitas').appendChild(d);
+}
+$('#addu').onclick = addCita;
+(() => { const n = new Date(); n.setMinutes(n.getMinutes() - n.getTimezoneOffset()); $('#u_ahora').value = loc(n); n.setHours(20, 0, 0, 0); $('#u_cierre').value = loc(n); })();
+$('#furg').onsubmit = ev => {
+  ev.preventDefault();
+  enviar(ev.target, async () => {
+    const f = v => v.length === 16 ? v + ':00' : v;
+    const citas = [...document.querySelectorAll('#ucitas .row')].map(r => ({
+      id: +r.querySelector('.ci').value, mascota_id: +r.querySelector('.cm').value,
+      inicio: f(r.querySelector('.cs').value), fin: f(r.querySelector('.cf').value)
+    }));
+    try {
+      const d = await api('/agenda/urgencias', 'POST', {
+        mascota_id: $('#u_mid').value ? +$('#u_mid').value : null, motivo: $('#u_mot').value,
+        ahora: f($('#u_ahora').value), hora_cierre: f($('#u_cierre').value),
+        desplazamiento_minutos: +$('#u_des').value || 20, citas
+      });
+      $('#o_urg').textContent = 'Urgencia registrada. Resultado de la agenda:';
+      $('#j_urg').hidden = false; $('#j_urg').textContent = JSON.stringify(d, null, 2); toast('Urgencia registrada');
+    } catch (e) { $('#o_urg').textContent = ''; $('#j_urg').hidden = true; toast(e.message, false); }
+  });
+};
+
+salud(); catalogo();
+</script>
+</body>
+</html>
