@@ -6,8 +6,8 @@ from contextlib import asynccontextmanager
 from datetime import timedelta
 
 from fastapi import Depends, FastAPI, Query, Request
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from src.api import schemas as sc
 from src.application.event_bus import EventBus
