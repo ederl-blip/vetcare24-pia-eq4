@@ -43,6 +43,7 @@ pre{background:#0f1f1c;color:#d6efe9;padding:12px;border-radius:8px;overflow:aut
 dialog{border:0;border-radius:12px;padding:20px;max-width:440px;width:92%}
 dialog::backdrop{background:#0006}dialog h3{margin-top:0}
 .st{display:inline-block;width:9px;height:9px;border-radius:50%;background:#aaa;margin-right:6px}.st.ok{background:#12b76a}.st.no{background:var(--er)}
+dl{margin:0}dt{color:var(--mu);font-size:12px;margin-top:8px}dd{margin:0}ul{padding-left:18px;margin:4px 0}.row select{flex:2;min-width:160px;padding:8px;border:1px solid var(--bd);border-radius:8px;font:inherit}
 @media(max-width:700px){body{flex-direction:column}aside{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}nav{flex-direction:row;flex-wrap:wrap}aside small{display:none}main{padding:14px}}
 </style>
 </head>
@@ -89,11 +90,11 @@ dialog::backdrop{background:#0006}dialog h3{margin-top:0}
   <h2>Nueva cita</h2><p class="sub">Solicita una cita con uno o más servicios del catálogo.</p>
   <form class="card" id="fcita">
     <div class="g">
-      <div><label>ID del cliente (actor)</label><input id="c_actor" required placeholder="VET-C001"></div>
+      <div><label>Número de cliente</label><input id="c_actor" required placeholder="VET-C001"></div>
       <div><label>Referencia</label><input id="c_ref" placeholder="Opcional"></div>
       <div><label>Fecha de solicitud</label><input id="c_fecha" type="date"></div>
     </div>
-    <label>Servicios</label><div id="lineas"></div>
+    <label>Servicios a agendar</label><div id="lineas"></div>
     <div class="row"><button type="button" class="b ghost" id="addl">+ Agregar servicio</button></div>
     <div class="chk"><input type="checkbox" id="c_promo">Promoción activa</div>
     <div class="chk"><input type="checkbox" id="c_aut" checked>Autorizado</div>
@@ -122,7 +123,7 @@ dialog::backdrop{background:#0006}dialog h3{margin-top:0}
     <h3>Registrar mascota</h3>
     <div class="g">
       <div><label>Nombre *</label><input id="m_nom" required></div>
-      <div><label>ID del tutor *</label><input id="m_prop" required placeholder="VET-C001"></div>
+      <div><label>Número de tutor *</label><input id="m_prop" required placeholder="VET-C001"></div>
       <div><label>Alergias (separadas por coma)</label><input id="m_ale" placeholder="penicilina, ibuprofeno"></div>
     </div>
     <div class="row"><button class="b">Registrar mascota</button></div>
@@ -131,9 +132,9 @@ dialog::backdrop{background:#0006}dialog h3{margin-top:0}
   <form class="card" id="frec">
     <h3>Recetar medicamento</h3>
     <div class="g">
-      <div><label>ID de la mascota *</label><input id="r_mid" type="number" required></div>
+      <div><label>Número de mascota *</label><input id="r_mid" type="number" required></div>
       <div><label>Medicamento *</label><input id="r_med" required placeholder="Penicilina G"></div>
-      <div><label>Sustancias activas (coma) *</label><input id="r_sus" required placeholder="penicilina"></div>
+      <div><label>Sustancias del medicamento (separadas por coma) *</label><input id="r_sus" required placeholder="penicilina"></div>
     </div>
     <div class="row"><button class="b">Guardar receta</button></div>
     <div class="res" id="o_rec"></div>
@@ -144,16 +145,16 @@ dialog::backdrop{background:#0006}dialog h3{margin-top:0}
   <h2>Urgencias</h2><p class="sub">Registra una urgencia: pausa la cita en curso y recorre las pendientes.</p>
   <form class="card" id="furg">
     <div class="g">
-      <div><label>ID de la mascota *</label><input id="u_mid" type="number"></div>
+      <div><label>Número de mascota *</label><input id="u_mid" type="number"></div>
       <div><label>Motivo de consulta *</label><input id="u_mot"></div>
       <div><label>Ahora</label><input id="u_ahora" type="datetime-local" required></div>
       <div><label>Hora de cierre</label><input id="u_cierre" type="datetime-local" required></div>
-      <div><label>Desplazamiento (15–20 min)</label><input id="u_des" type="number" min="15" max="20" value="20"></div>
+      <div><label>Minutos que se recorren las citas (15–20)</label><input id="u_des" type="number" min="15" max="20" value="20"></div>
     </div>
     <label>Citas de la agenda</label><div id="ucitas"></div>
     <div class="row"><button type="button" class="b ghost" id="addu">+ Agregar cita</button></div>
     <div class="row"><button class="b">Registrar urgencia</button></div>
-    <div class="res" id="o_urg"></div><pre id="j_urg" hidden></pre>
+    <div class="res" id="o_urg"></div><div id="j_urg"></div>
   </form>
 </section>
 </main>
@@ -168,7 +169,16 @@ API = API.replace(/\/$/, '');
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const list = s => s.split(',').map(x => x.trim()).filter(Boolean);
-$('#apiurl').textContent = API;
+const hum = k => String(k).replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, c => c.toUpperCase());
+const fecha = v => { const d = new Date(v); return isNaN(d) ? v : d.toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }); };
+const hora = v => { const d = new Date(v); return isNaN(d) ? v : d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }); };
+const ir = v => document.querySelector(`nav button[data-v="${v}"]`).click();
+function bonito(v) {
+  if (v === true) return 'Sí'; if (v === false) return 'No'; if (v == null) return '—';
+  if (Array.isArray(v)) return v.length ? '<ul>' + v.map(x => '<li>' + bonito(x) + '</li>').join('') + '</ul>' : '—';
+  if (typeof v === 'object') return '<dl>' + Object.entries(v).map(([k, x]) => `<dt>${esc(hum(k))}</dt><dd>${bonito(x)}</dd>`).join('') + '</dl>';
+  return esc(v);
+}
 
 function msg(d) {
   if (!d) return '';
@@ -206,8 +216,8 @@ function confirmar(titulo, texto, pedirNombre) {
     };
   });
 }
-function verJSON(titulo, data) {
-  $('#dlgc').innerHTML = `<h3>${esc(titulo)}</h3><pre>${esc(JSON.stringify(data, null, 2))}</pre><div class="row"><button id="x">Cerrar</button></div>`;
+function verInfo(titulo, html) {
+  $('#dlgc').innerHTML = `<h3>${esc(titulo)}</h3>${html}<div class="row"><button id="x">Cerrar</button></div>`;
   $('#dlg').showModal(); $('#x').onclick = () => $('#dlg').close();
 }
 async function enviar(btn, fn) {
@@ -228,10 +238,19 @@ async function salud() {
   try { await api('/health'); $('#dot').className = 'st ok'; $('#hs').textContent = 'API funcionando'; }
   catch (e) { $('#dot').className = 'st no'; $('#hs').textContent = 'No se pudo conectar: ' + e.message + ' (¿CORS o API dormida?)'; }
 }
+let CAT = [];
 async function catalogo() {
-  try { const c = await api('/catalogo'); $('#cat').innerHTML = `<pre>${esc(JSON.stringify(c, null, 2))}</pre>`; }
-  catch (e) { $('#cat').textContent = 'No se pudo cargar: ' + e.message; }
+  try {
+    CAT = await api('/catalogo');
+    $('#cat').innerHTML = '<div class="tw"><table><thead><tr><th>Servicio</th><th>Precio</th><th>Lugares</th><th></th></tr></thead><tbody>' +
+      CAT.map(r => `<tr><td>${esc(r.descripcion)}</td><td>$${esc(r.precio_mxn)}</td><td>${r.habilitado ? esc(r.lugares_disponibles) : 'No disponible'}</td><td>${r.habilitado ? `<button class="ghost sm" data-ag="${esc(r.id)}">Agendar</button>` : ''}</td></tr>`).join('') + '</tbody></table></div>';
+  } catch (e) { $('#cat').textContent = 'No se pudo cargar el catálogo: ' + e.message; }
+  if (!$('#lineas').children.length) addLinea();
 }
+$('#cat').onclick = e => {
+  const b = e.target.closest('[data-ag]'); if (!b) return;
+  $('#lineas').innerHTML = ''; addLinea(b.dataset.ag); ir('nueva');
+};
 $('#reh').onclick = salud;
 
 /* Citas */
@@ -245,8 +264,8 @@ async function cargarCitas() {
       const acc = (o.estado === 'SOLICITADA' ? a('confirmar', 'Confirmar') : '') +
         (o.estado === 'CONFIRMADA' ? a('realizar', 'Realizada') : '') +
         (['SOLICITADA', 'CONFIRMADA'].includes(o.estado) ? a('cancelar', 'Cancelar') : '') +
-        a('evaluacion', 'Evaluación') + a('eventos', 'Historial');
-      return `<tr><td>${esc(o.id)}</td><td>${esc(o.actor_id)}</td><td><span class="tag ${esc(o.estado)}">${esc(o.estado)}</span></td><td>${esc(o.fecha_solicitud)}</td><td>$${esc(o.total_mxn)}</td><td>${acc}</td></tr>`;
+        a('evaluacion', 'Revisión') + a('eventos', 'Historial');
+      return `<tr><td>${esc(o.id)}</td><td>${esc(o.actor_id)}</td><td><span class="tag ${esc(o.estado)}">${esc(hum(String(o.estado).toLowerCase()))}</span></td><td>${esc(o.fecha_solicitud)}</td><td>$${esc(o.total_mxn)}</td><td>${acc}</td></tr>`;
     }).join('') : '<tr><td colspan="6">No hay citas con ese filtro.</td></tr>';
   } catch (e) { $('#tb').innerHTML = `<tr><td colspan="6">${esc(e.message)}</td></tr>`; }
 }
@@ -255,19 +274,24 @@ $('#tb').onclick = async e => {
   const b = e.target.closest('button[data-a]'); if (!b) return;
   const { a, id } = b.dataset, p = '/operaciones/' + encodeURIComponent(id);
   try {
-    if (a === 'evaluacion' || a === 'eventos') verJSON((a === 'eventos' ? 'Historial de ' : 'Evaluación de ') + id, await api(`${p}/${a}`));
+    if (a === 'eventos') {
+      const ev = await api(`${p}/${a}`);
+      verInfo('Historial de la cita ' + id, ev.length ? '<ul>' + ev.map(x => `<li>${esc(hum(x.nombre))} · ${esc(fecha(x.ocurrido))}</li>`).join('') + '</ul>' : '<p>Sin movimientos.</p>');
+    } else if (a === 'evaluacion') verInfo('Revisión de la cita ' + id, bonito(await api(`${p}/${a}`)));
     else { await api(`${p}/${a}`, 'POST'); toast('Cita ' + id + ': ' + a + ' correcto'); cargarCitas(); }
   } catch (err) { toast(err.message, false); }
 };
 
 /* Nueva cita */
-function addLinea() {
+function addLinea(sel) {
   const d = document.createElement('div'); d.className = 'row';
-  d.innerHTML = '<input class="rid" placeholder="ID del servicio (ej. VET-P001)" required><input class="cant" type="number" min="1" value="1" style="max-width:90px" required><button type="button" class="ghost sm">✕</button>';
+  const op = CAT.filter(r => r.habilitado).map(r => `<option value="${esc(r.id)}"${r.id === sel ? ' selected' : ''}>${esc(r.descripcion)} — $${esc(r.precio_mxn)}</option>`).join('');
+  d.innerHTML = (CAT.length ? `<select class="rid">${op}</select>` : '<input class="rid" placeholder="Código del servicio" required>') +
+    '<input class="cant" type="number" min="1" value="1" style="max-width:90px" required title="Cantidad"><button type="button" class="ghost sm">✕</button>';
   d.querySelector('button').onclick = () => d.remove();
   $('#lineas').appendChild(d);
 }
-$('#addl').onclick = addLinea; addLinea();
+$('#addl').onclick = () => addLinea();
 $('#fcita').onsubmit = ev => {
   ev.preventDefault();
   enviar(ev.target, async () => {
@@ -278,7 +302,7 @@ $('#fcita').onsubmit = ev => {
         actor_id: $('#c_actor').value.trim(), lineas, promocion_activa: $('#c_promo').checked,
         autorizado: $('#c_aut').checked, referencia: $('#c_ref').value, fecha_solicitud: $('#c_fecha').value || null
       });
-      $('#o_cita').textContent = `Cita ${o.id} creada (${o.estado}). Total: $${o.total_mxn} MXN`; toast('Cita solicitada');
+      $('#o_cita').textContent = `Cita ${o.id} solicitada. Total: $${o.total_mxn} MXN. Confírmala en la sección Citas.`; toast('Cita solicitada');
     } catch (e) { $('#o_cita').textContent = ''; toast(e.message, false); }
   });
 };
@@ -290,7 +314,7 @@ async function enviarTutor(conf) {
       nombre: $('#t_nom').value.trim(), telefono: $('#t_tel').value.trim(),
       correo: $('#t_cor').value.trim() || null, ciudad: $('#t_ciu').value.trim(), confirmar_distinta_persona: conf
     });
-    $('#o_tutor').textContent = `Tutor registrado. ID: ${t.id} (úsalo al registrar mascotas).`; toast('Tutor registrado');
+    $('#o_tutor').textContent = `Tutor registrado. Su número es ${t.id}; úsalo al registrar a sus mascotas.`; toast('Tutor registrado');
   } catch (e) {
     $('#o_tutor').textContent = '';
     if (!conf && e.status !== 422 && /duplic|existe|mismo|tel[eé]fono|correo/i.test(e.message)) {
@@ -306,7 +330,7 @@ $('#fmasc').onsubmit = ev => {
   enviar(ev.target, async () => {
     try {
       const m = await api('/mascotas', 'POST', { nombre: $('#m_nom').value.trim(), propietario_id: $('#m_prop').value.trim(), alergias: list($('#m_ale').value) });
-      $('#o_masc').textContent = `Mascota registrada. ID: ${m.id}` + (m.alergias.length ? ` · Alergias: ${m.alergias.join(', ')}` : '');
+      $('#o_masc').textContent = `Mascota registrada. Su número es ${m.id}` + (m.alergias.length ? ` · Alergias: ${m.alergias.join(', ')}` : '');
       $('#r_mid').value = m.id; toast('Mascota registrada');
     } catch (e) { $('#o_masc').textContent = ''; toast(e.message, false); }
   });
@@ -317,7 +341,7 @@ async function enviarReceta(conf, vet) {
       medicamento: $('#r_med').value.trim(), sustancias: list($('#r_sus').value),
       confirmar_conscientemente: conf, veterinario: vet || null
     });
-    $('#o_rec').textContent = `Receta ${r.id} guardada` + (r.con_alerta ? ` con alerta de alergia, autorizada por ${r.autorizada_por}.` : ' sin alertas.');
+    $('#o_rec').textContent = `Receta guardada` + (r.con_alerta ? ` con alerta de alergia, autorizada por ${r.autorizada_por}.` : ', sin alertas de alergia.');
     toast('Receta guardada');
   } catch (e) {
     $('#o_rec').textContent = '';
@@ -333,7 +357,7 @@ $('#frec').onsubmit = ev => { ev.preventDefault(); enviar(ev.target, () => envia
 const loc = d => d.toISOString().slice(0, 16);
 function addCita() {
   const d = document.createElement('div'); d.className = 'row';
-  d.innerHTML = '<input class="ci" type="number" placeholder="ID cita" style="max-width:90px" required><input class="cm" type="number" placeholder="ID mascota" style="max-width:110px" required><input class="cs" type="datetime-local" required><input class="cf" type="datetime-local" required><button type="button" class="ghost sm">✕</button>';
+  d.innerHTML = '<input class="ci" type="number" placeholder="N.º de cita" style="max-width:90px" required><input class="cm" type="number" placeholder="N.º de mascota" style="max-width:110px" required><input class="cs" type="datetime-local" required><input class="cf" type="datetime-local" required><button type="button" class="ghost sm">✕</button>';
   d.querySelector('button').onclick = () => d.remove();
   $('#ucitas').appendChild(d);
 }
@@ -353,9 +377,11 @@ $('#furg').onsubmit = ev => {
         ahora: f($('#u_ahora').value), hora_cierre: f($('#u_cierre').value),
         desplazamiento_minutos: +$('#u_des').value || 20, citas
       });
-      $('#o_urg').textContent = 'Urgencia registrada. Resultado de la agenda:';
-      $('#j_urg').hidden = false; $('#j_urg').textContent = JSON.stringify(d, null, 2); toast('Urgencia registrada');
-    } catch (e) { $('#o_urg').textContent = ''; $('#j_urg').hidden = true; toast(e.message, false); }
+      $('#o_urg').textContent = 'Urgencia registrada. Así quedó la agenda:';
+      $('#j_urg').innerHTML = (d.motivo ? `<p>${bonito(d.motivo)}</p>` : '') + '<div class="tw"><table><thead><tr><th>Cita</th><th>Estado</th><th>Horario</th></tr></thead><tbody>' +
+        d.citas.map(c => `<tr><td>${esc(c.id)}</td><td>${esc(hum(String(c.estado).toLowerCase()))}</td><td>${esc(hora(c.inicio))} a ${esc(hora(c.fin))}</td></tr>`).join('') + '</tbody></table></div>';
+      toast('Urgencia registrada');
+    } catch (e) { $('#o_urg').textContent = ''; $('#j_urg').innerHTML = ''; toast(e.message, false); }
   });
 };
 
