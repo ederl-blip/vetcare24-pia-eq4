@@ -54,21 +54,12 @@ def crear_app(database_url=None, seed=None) -> FastAPI:
         lifespan=lifespan,
     )
 
-        app = FastAPI(
-        title="VetCare 24 API",
-        version="1.0.0",
-        description="Citas y servicios veterinarios de VetCare 24 (PIA, Equipo 4, UANL FIME).",
-        lifespan=lifespan,
-    )
-
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    def get_session():
 
     def get_session():
         with factory() as s:
