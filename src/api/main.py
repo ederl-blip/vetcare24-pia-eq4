@@ -7,6 +7,7 @@ from datetime import timedelta
 
 from fastapi import Depends, FastAPI, Query, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.api import schemas as sc
 from src.application.event_bus import EventBus
@@ -52,6 +53,22 @@ def crear_app(database_url=None, seed=None) -> FastAPI:
         description="Citas y servicios veterinarios de VetCare 24 (PIA, Equipo 4, UANL FIME).",
         lifespan=lifespan,
     )
+
+        app = FastAPI(
+        title="VetCare 24 API",
+        version="1.0.0",
+        description="Citas y servicios veterinarios de VetCare 24 (PIA, Equipo 4, UANL FIME).",
+        lifespan=lifespan,
+    )
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    def get_session():
 
     def get_session():
         with factory() as s:
